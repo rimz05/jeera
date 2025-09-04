@@ -8,10 +8,10 @@ const Page = async () => {
 
     // if(!data) return null;
 
-    if(data?.onboardingComplete && data?.workspaces?.length === 0){
+    if(data?.onboardingCompleted && data?.workspaces?.length === 0){
         redirect('/create-workspace');
 
-    }else if(!data?.onboardingComplete){
+    }else if(!data?.onboardingCompleted){
         redirect('/onboarding');
     }else{
         redirect(`/workspace/${data?.workspaces?.[0]?.workspaceId}`)

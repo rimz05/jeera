@@ -22,6 +22,7 @@ export const createUser = async (data: UserDataType) => {
             industryType: validData.industryType,
             role: validData.role,
             image: user?.picture || "",
+            onboardingCompleted: true,
         },
         create: {
             id: user?.id as string,
@@ -32,7 +33,7 @@ export const createUser = async (data: UserDataType) => {
             industryType: validData.industryType,
             role: validData.role,
             image: user?.picture || "",
-            subscriptions: {
+            subscription: {
                 create: {
                     plan: "FREE",
                     status: "ACTIVE",
@@ -46,13 +47,14 @@ export const createUser = async (data: UserDataType) => {
             email: true,
             name: true,
             about: true,
-            workspace: true,
+            onboardingCompleted: true,
+            workspaces: true,
         },
     })
 
     // todo: send user welcome email
 
-    if (userData.workspace.length === 0) {
+    if (userData.workspaces.length === 0) {
         redirect("/create-workspace")
     }
 

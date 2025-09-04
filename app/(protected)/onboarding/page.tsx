@@ -9,9 +9,9 @@ const page = async () => {
   const { data } = await getUserWorkspace();
   const {user} = await userRequired();
 
-  if (data?.onboardingComplete && data?.workspaces?.length > 0) {
+  if (data?.onboardingCompleted && data?.workspaces?.length > 0) {
     redirect("/workspace");
-  } else if (data?.onboardingComplete) {
+  } else if (data?.onboardingCompleted) {
     redirect("/create-workspace");
   }
 

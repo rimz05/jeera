@@ -1,67 +1,53 @@
-"use client";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+"use client"
+
+import { useWorkspaceId } from "@/hooks/use-workspace-id";
+import { projectSchema } from "@/lib/schema";
+import { WorkspaceMemberProps } from "@/utils/types"
 import { zodResolver } from "@hookform/resolvers/zod";
-import { workspaceSchema } from "@/lib/schema";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../ui/form";
+import { useState } from "react";
+import { Form, useForm } from "react-hook-form";
+import z from "zod";
+import { Dialog, DialogContent } from "../ui/dialog";
+import { DialogTrigger } from "@radix-ui/react-dialog";
+import { Button } from "../ui/button";
+import { Plus } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
-import { createNewWorkspace } from "@/app/actions/workspace";
-import { useRouter } from "next/navigation"; 
-import { toast } from "sonner";
 
-export type CreateWorkspaceDataType = z.infer<typeof workspaceSchema>; 
+interface Props {
+    workspaceMembers: WorkspaceMemberProps[];
+}
 
-const CreateWorkspaceForm = () => {
-  const [pending, setPending] = useState(false);
-  const router = useRouter();
+type ProjectDataType = z.infer<typeof projectSchema>;
+export const CreateProjectForm = ( {workspaceMembers}: Props) =>{
+    const workspaceId = useWorkspaceId()
+    const [pending, setPending] = useState(false)
+    const form = useForm<ProjectDataType>({
+        resolver: zodResolver(projectSchema),
+        defaultValues:{
+            name:"",
+            description:"",
+            memberAccess:[],
+            workspaceId: workspaceId as string,
+        }
+    });
+    const handleSubmit = async(data: ProjectDataType) =>{
 
-  const form = useForm<CreateWorkspaceDataType>({
-    resolver: zodResolver(workspaceSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-    },
-  });
-
-  const onSubmit = async (data: CreateWorkspaceDataType) => {
-    try {
-      setPending(true);
-      const res = await createNewWorkspace(data);
-      toast.success("Workspace created successfully");
-      router.push(`/workspace/${res.id}`);
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to create workspace");
-    } finally {
-      setPending(false);
     }
-  };
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    return<>
+    <Dialog>
+        <DialogTrigger asChild>
+            <Button size="icon" className="size-5">
+                <Plus/>
+            </Button>
+        </DialogTrigger>
+        <DialogContent>
+            <div className="min-h-screen flex items-center justify-center bg-background">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Create new Workspace</CardTitle>
-          <CardDescription>
-            Please provide the following information to create your workspace.
-          </CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -121,7 +107,7 @@ const CreateWorkspaceForm = () => {
         </CardContent>
       </Card>
     </div>
-  );
-};
-
-export default CreateWorkspaceForm;
+        </DialogContent>
+    </Dialog>
+    </>
+}

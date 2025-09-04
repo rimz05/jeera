@@ -15,22 +15,41 @@ export const getUserWorkspace = async () => {
         }
 
         const workspaces = await db.user.findUnique({
-            where:{ id: user.id },
-            include:{
-                workspace:{
-                    select: {
-                        id: true,
-                        userId: true,
-                        workspaceId: true,
-                        accessLevel: true,
-                        createdAt: true, Workspace:{select:{name:true}}
-                    }
-                }
-            }
+            where: { id: user.id },
+            select: {
+                id: true,
+                email: true,
+                onboardingCompleted: true,
+                workspaces: {
+                select: {
+                    id: true,
+                    userId: true,
+                    workspaceId: true,
+                    accessLevel: true,
+                    createdAt: true,
+                    workspace: { select: { name: true } },
+                },
+                },
+            },
+            });
 
-        });
+            if (!workspaces) {
+      return {
+        success: false,
+        error: true,
+        message: "No workspaces found",
+        status: 404,
+        data: null,
+      };
+    }
 
-        return {data:workspaces}
+    return {
+      success: true,
+      error: false,
+      message: "User workspaces fetched",
+      status: 200,
+      data: workspaces,
+    };
 
     } catch (error) {
         console.log(error);
