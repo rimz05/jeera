@@ -1,25 +1,30 @@
-import { ProjectProps, WorkspaceMemberProps } from "@/utils/types";
+// components/sidebar/app-sidebar.tsx
+import { User } from "@prisma/client";
 import { AppSidebarDataProps } from "./app-sidebar-container";
-import { User } from "@/lib/generated/prisma";
-import { Sidebar, SidebarContent, SidebarGroupLabel, SidebarHeader } from "../ui/sidebar";
-import { Avatar, AvatarImage } from "../ui/avatar"; 
-import Link from "next/link";
+import { ProjectProps, WorkspaceMembersProps } from "@/utils/types";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+} from "../ui/sidebar";
+import { Avatar, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
+import Link from "next/link";
 import { Plus } from "lucide-react";
 import { WorkspaceSelector } from "./workspace-selector";
 import { NavMain } from "./nav-main";
 import { NavProjects } from "./nav-project-list";
 
-
 export const AppSidebar = ({
   data,
   projects,
-  workspaceMembers,
+  workspaceMembers, // ✅ receive members here
   user,
 }: {
   data: AppSidebarDataProps;
   projects: ProjectProps[];
-  workspaceMembers: WorkspaceMemberProps[];
+  workspaceMembers: WorkspaceMembersProps[]; // ✅ must be typed
   user: User;
 }) => {
   return (
@@ -30,7 +35,7 @@ export const AppSidebar = ({
             <AvatarImage src={"/wrench.svg"} />
           </Avatar>
           <SidebarGroupLabel>
-            <span className="text-xl font-bold">HiTeam</span>
+            <span className="text-xl font-bold">DailyTM</span>
           </SidebarGroupLabel>
         </div>
 
@@ -39,8 +44,8 @@ export const AppSidebar = ({
             Workspace
           </SidebarGroupLabel>
 
-          <Button asChild size="icon" className="size-5">
-            <Link className="text-white" href={"/create-workspace"}>
+          <Button asChild size={"icon"} className="size-5">
+            <Link href="/create-workspace">
               <Plus />
             </Link>
           </Button>
@@ -51,7 +56,12 @@ export const AppSidebar = ({
 
       <SidebarContent>
         <NavMain />
-        <NavProjects projects={projects} workspaceMembers={workspaceMembers} />
+
+        {/* ✅ pass members down into NavProjects */}
+        <NavProjects
+          projects={projects}
+          workspaceMembers={workspaceMembers}
+        />
       </SidebarContent>
     </Sidebar>
   );

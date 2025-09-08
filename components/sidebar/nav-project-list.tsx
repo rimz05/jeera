@@ -1,27 +1,26 @@
-"use client"
+// components/sidebar/nav-project-list.tsx
+"use client";
 
-import { ProjectProps, WorkspaceMemberProps } from "@/utils/types"
+import { ProjectProps, WorkspaceMembersProps } from "@/utils/types";
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuItem,
   SidebarMenuButton,
+  SidebarMenuItem,
   useSidebar,
-} from "../ui/sidebar"
-import { usePathname } from "next/navigation"
-import Link from "next/link"
-import { CreateProjectForm } from "../project/create-project-form"
+} from "../ui/sidebar";
+import { usePathname } from "next/navigation";
+import { CreateProjectForm } from "../project/create-project-form";
 
-export const NavProjects = ({
-  projects,
-  workspaceMembers,
-}: {
-  projects: ProjectProps[]
-  workspaceMembers: WorkspaceMemberProps[]
-}) => {
-  const { isMobile, setOpenMobile } = useSidebar()
-  const pathname = usePathname()
+interface NavProjectsProps {
+  projects: ProjectProps[];
+  workspaceMembers: WorkspaceMembersProps[]; // ✅ must be typed
+}
+
+export const NavProjects = ({ projects, workspaceMembers }: NavProjectsProps) => {
+  const { isMobile, setOpenMobile } = useSidebar();
+  const pathname = usePathname();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -29,31 +28,37 @@ export const NavProjects = ({
         <span className="text-sm font-semibold text-muted-foreground uppercase">
           Projects
         </span>
-      <CreateProjectForm workspaceMembers={workspaceMembers}/>
+
+        {/* ✅ workspaceMembers finally arrive here */}
+        <CreateProjectForm workspaceMembers={workspaceMembers} />
       </SidebarGroupLabel>
 
       <SidebarMenu>
         {projects?.map((proj) => {
-          const href = `/workspace/${proj.workspaceId}/projects/${proj.id}`
+          const href = `/workspace/${proj.workspaceId}/projects/${proj.id}`;
+          const isActive = pathname === href;
 
           return (
-            <SidebarMenuItem key={proj.id}>
-              <SidebarMenuButton>
-                <Link
+            <SidebarMenuItem key={proj?.id}>
+              <SidebarMenuButton asChild>
+                <a
                   href={href}
+                  onClick={() => {
+                    if (isMobile) setOpenMobile(false);
+                  }}
                   className={
-                    pathname === href
-                    ? "text-primary-foreground font-semibold"
-                    : "text-muted-foreground hover:text-primary-foreground"
+                    isActive
+                      ? "text-blue-500 font-semibold"
+                      : "text-muted-foreground"
                   }
                 >
                   {proj?.name}
-                </Link>
+                </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
-          )
+          );
         })}
       </SidebarMenu>
     </SidebarGroup>
-  )
-}
+  );
+};

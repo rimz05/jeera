@@ -1,18 +1,14 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../lib/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 
 model User {
   id    String @id
@@ -22,7 +18,7 @@ model User {
   industryType  String
   role  String
   country String
-  workspaces  WorkspaceMembers[]
+  workspaces  WorkspaceMember[]
   image String?
   tasks   Task[]
   activities   Activity[]
@@ -39,7 +35,7 @@ model Workspace {
   name String
   description String?
   ownerId String?
-  members WorkspaceMembers[]
+  members WorkspaceMember[]
   projects  Project[]
   inviteCode String @unique
   createdAt DateTime @default(now())
@@ -52,7 +48,7 @@ enum AccessLevel {
   MEMBER
   VIEWER
 }
-model WorkspaceMembers {
+model WorkspaceMember {
   id          String @id @default(uuid())
   userId       String
   user  User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -92,7 +88,7 @@ model Project {
 model ProjectAccess {
   id         String @id @default(uuid())
   workspaceMemberId String 
-  workspaceMember WorkspaceMembers @relation(fields: [workspaceMemberId], references: [id], onDelete: Cascade)
+  workspaceMember WorkspaceMember @relation(fields: [workspaceMemberId], references: [id], onDelete: Cascade)
 
   projectId String
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)

@@ -1,21 +1,19 @@
 import React from "react";
-import { getUserWorkspace } from "../get-user-workspace";
 import { redirect } from "next/navigation";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebarContainer } from "@/components/sidebar/app-sidebar-container";
+import { AppSidebarContainer, AppSidebarDataProps } from "@/components/sidebar/app-sidebar-container";
+import { getUserWorkspaces } from "@/app/data/workspace/get-user-workspaces";
 
 interface Props {
   children: React.ReactNode;
-  params: { workspaceId: string }; // ✅ fixed type
+  params: { workspaceid: string }; // ✅ fixed type
 }
 
 const WorkspaceIdLayout = async ({ children, params }: Props) => {
-  const { workspaceId } = params; // ✅ no need to await
-  const { success, data } = await getUserWorkspace();
+  console.log("params received in layout:", params); 
+  const { workspaceid } = params; // ✅ no need to await
+  const { data } = await getUserWorkspaces() as unknown as { success: boolean; data: AppSidebarDataProps };
 
-  if (!success || !data) {
-    redirect("/auth/login"); 
-  }
 
   if (!data?.onboardingCompleted && (data?.workspaces?.length ?? 0) === 0) {
     redirect("/create-workspace");
@@ -26,7 +24,7 @@ const WorkspaceIdLayout = async ({ children, params }: Props) => {
   return (
     <SidebarProvider>
       <div className="w-full flex bg-background h-screen ">
-        <AppSidebarContainer data={data as any} workspaceId={workspaceId} />
+        <AppSidebarContainer data={data} workspaceId={workspaceid} />
         <main className="w-full overflow-y-auto min-h-screen">
           <div className="flex items-center">
             <SidebarTrigger className="pt-3" />

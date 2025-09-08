@@ -1,17 +1,17 @@
-import CreateWorkspaceForm from '@/components/workspace/create-workspace-form'
-import React from 'react'
-import { getUserWorkspace } from '../workspace/get-user-workspace'
-import { redirect } from 'next/navigation';
 
-const page = async() => {
+import { CreateWorkspaceForm } from "@/components/workspace/create-workspace-form";
+import { redirect } from "next/navigation";
+import { getUserWorkspace } from "../workspace/get-user-workspace";
+
+const page = async () => {
   const { data } = await getUserWorkspace();
-  console.log("Workspace data:", data);
-  
-  if(!data?.onboardingCompleted) redirect('/onboarding')
+
+  if (!data?.onboardingCompleted) redirect("/onboarding");
   return (
     <div>
-      <CreateWorkspaceForm/>
+      <CreateWorkspaceForm />
     </div>
-  )
-}
-export default page  
+  );
+};
+
+export default page;

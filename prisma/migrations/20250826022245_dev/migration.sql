@@ -84,7 +84,7 @@ CREATE TABLE "public"."Project" (
 -- CreateTable
 CREATE TABLE "public"."ProjectAccess" (
     "id" TEXT NOT NULL,
-    "workspaceMemberId" TEXT NOT NULL,
+    "WorkspaceMembersId" TEXT NOT NULL,
     "projectId" TEXT NOT NULL,
     "hasAccess" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -187,7 +187,7 @@ CREATE UNIQUE INDEX "WorkspaceMembers_workspaceId_key" ON "public"."WorkspaceMem
 CREATE UNIQUE INDEX "Project_workspaceId_key" ON "public"."Project"("workspaceId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ProjectAccess_workspaceMemberId_projectId_key" ON "public"."ProjectAccess"("workspaceMemberId", "projectId");
+CREATE UNIQUE INDEX "ProjectAccess_WorkspaceMembersId_projectId_key" ON "public"."ProjectAccess"("WorkspaceMembersId", "projectId");
 
 -- CreateIndex
 CREATE INDEX "Activity_projectId_idx" ON "public"."Activity"("projectId");
@@ -217,7 +217,7 @@ ALTER TABLE "public"."WorkspaceMembers" ADD CONSTRAINT "WorkspaceMembers_workspa
 ALTER TABLE "public"."Project" ADD CONSTRAINT "Project_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "public"."Workspace"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."ProjectAccess" ADD CONSTRAINT "ProjectAccess_workspaceMemberId_fkey" FOREIGN KEY ("workspaceMemberId") REFERENCES "public"."WorkspaceMembers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."ProjectAccess" ADD CONSTRAINT "ProjectAccess_WorkspaceMembersId_fkey" FOREIGN KEY ("WorkspaceMembersId") REFERENCES "public"."WorkspaceMembers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."ProjectAccess" ADD CONSTRAINT "ProjectAccess_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "public"."Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;

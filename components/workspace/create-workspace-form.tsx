@@ -1,34 +1,39 @@
 "use client";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+
+import { createUser } from "@/app/actions/user";
+import { userSchema, workspaceSchema } from "@/lib/schema";
+import { industryTypesList, roleList } from "@/utils";
+import { countryList } from "@/utils/countriesList";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { workspaceSchema } from "@/lib/schema";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 import {
   Card,
-  CardContent,
-  CardDescription,
   CardHeader,
+  CardDescription,
+  CardContent,
   CardTitle,
-} from "@/components/ui/card";
+} from "../ui/card";
+
 import {
-  Form,
   FormControl,
-  FormField,
-  FormItem,
   FormLabel,
+  FormItem,
   FormMessage,
+  Form,
+  FormField,
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { createNewWorkspace } from "@/app/actions/workspace";
-import { useRouter } from "next/navigation"; 
-import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-export type CreateWorkspaceDataType = z.infer<typeof workspaceSchema>; 
+export type CreateWorkspaceDataType = z.infer<typeof workspaceSchema>;
 
-const CreateWorkspaceForm = () => {
+export const CreateWorkspaceForm = () => {
   const [pending, setPending] = useState(false);
   const router = useRouter();
 
@@ -43,14 +48,14 @@ const CreateWorkspaceForm = () => {
   const onSubmit = async (data: CreateWorkspaceDataType) => {
     try {
       setPending(true);
-      const res = await createNewWorkspace(data);
+      const { data: res } = await createNewWorkspace(data);
+
       toast.success("Workspace created successfully");
-      router.push(`/workspace/${res.id}`);
+
+      router.push(`/workspace/${res?.id as string}`);
     } catch (error) {
-      console.error(error);
-      toast.error("Failed to create workspace");
-    } finally {
-      setPending(false);
+      console.log(error);
+      toast.error("Something went wrong. Try again");
     }
   };
 
@@ -58,16 +63,15 @@ const CreateWorkspaceForm = () => {
     <div className="min-h-screen flex items-center justify-center bg-background">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Create new Workspace</CardTitle>
+          <CardTitle>Create New Workspace</CardTitle>
           <CardDescription>
-            Please provide the following information to create your workspace.
+            Set up a workspace for yourself and team
           </CardDescription>
         </CardHeader>
 
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {/* Workspace Name */}
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               <FormField
                 control={form.control}
                 name="name"
@@ -75,45 +79,36 @@ const CreateWorkspaceForm = () => {
                   <FormItem>
                     <FormLabel>Workspace Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Workspace Name" {...field} />
+                      <Input placeholder="Enter workspace name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {/* Description */}
               <FormField
                 control={form.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>Bio</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Enter a description..."
-                        className="resize-none"
                         {...field}
-                      />
+                        placeholder="Workspace description"
+                        className="resize-none"
+                      ></Textarea>
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {/* Buttons */}
               <div className="flex flex-row items-center gap-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => form.reset()}
-                  disabled={pending}
-                >
+                <Button type="button" variant={"outline"} disabled={pending}>
                   Cancel
                 </Button>
-
-                <Button type="submit" disabled={pending}>
-                  {pending ? "Creating..." : "Create Workspace"}
+                <Button type="submit" disabled={pending} className="">
+                  Create Workspace
                 </Button>
               </div>
             </form>
@@ -123,5 +118,3 @@ const CreateWorkspaceForm = () => {
     </div>
   );
 };
-
-export default CreateWorkspaceForm;

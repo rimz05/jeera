@@ -1,9 +1,10 @@
 "use client";
+
+import { userSchema } from "@/lib/schema";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { userSchema } from "@/lib/schema";
 import {
   Form,
   FormControl,
@@ -11,14 +12,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "./ui/form";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "./ui/card";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import {
@@ -27,10 +28,11 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select"; // ✅ corrected import
+} from "./ui/select";
 import { countryList } from "@/utils/countriesList";
 import { industryTypesList, roleList } from "@/utils";
 import { Textarea } from "./ui/textarea";
+import { toast } from "sonner";
 import { createUser } from "@/app/actions/user";
 
 interface Props {
@@ -41,7 +43,7 @@ interface Props {
 
 export type UserDataType = z.infer<typeof userSchema>;
 
-const OnboardingForm = ({ name, email, image }: Props) => {
+export const OnboardingForm = ({ name, email, image }: Props) => {
   const [pending, setPending] = useState(false);
 
   const form = useForm<UserDataType>({
@@ -52,38 +54,33 @@ const OnboardingForm = ({ name, email, image }: Props) => {
       email: email,
       image: image || "",
       role: "",
-      industryType: "", // ✅ consistent with field
-      country: "",
+      industryType: "",
     },
   });
 
-
-const onSubmit = async (data: UserDataType) => {
-  try {
-    setPending(true);
-    await createUser(data);  // ✅ just call it
-  } catch (error) {
-    console.error(error);
-  } finally {
-    setPending(false);
-  }
-};
-
+  const onSubmit = async (data: UserDataType) => {
+    try {
+      setPending(true);
+      await createUser(data);
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong. Try again");
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Welcome to Plannfy</CardTitle>
+          <CardTitle>Welcome to DailyTM</CardTitle>
           <CardDescription>
-            Let's get started by setting up your profile.
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit.
           </CardDescription>
         </CardHeader>
 
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-              {/* Full Name */}
               <FormField
                 control={form.control}
                 name="name"
@@ -91,95 +88,99 @@ const onSubmit = async (data: UserDataType) => {
                   <FormItem>
                     <FormLabel>Full Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your full name" {...field} />
+                      <Input placeholder="Enter full name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {/* Country */}
               <FormField
                 control={form.control}
                 name="country"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Country</FormLabel>
-                    <FormControl className="w-full">
-                      <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select your country" />
+                          <SelectValue placeholder="Select country" />
                         </SelectTrigger>
-                        <SelectContent>
-                          {countryList.map((country) => (
-                            <SelectItem key={country.code} value={country.name}>
-                              <div className="flex items-center">
-                                <img
-                                  src={country.flag}
-                                  alt={country.name}
-                                  className="w-5 h-3"
-                                />
-                                <p className="pl-2">{country.name}</p>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
+                      </FormControl>
+                      <SelectContent>
+                        {countryList.map((country) => (
+                          <SelectItem key={country.code} value={country.name}>
+                            <div className="flex flex-row items-center">
+                              <img
+                                src={country.flag}
+                                alt={country.name}
+                                className="w-4 h-3"
+                              />
+                              <p className="pl-2">{country.name}</p>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                {/* Industry */}
+              <div className="grid  grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="industryType" // ✅ fixed
+                  name="industryType"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Industry</FormLabel>
-                      <FormControl>
-                        <Select onValueChange={field.onChange} value={field.value}>
+                      <FormLabel>Industry Type</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select your industry" />
+                            <SelectValue placeholder="Select industry type" />
                           </SelectTrigger>
-                          <SelectContent>
-                            {industryTypesList.map((industry) => (
-                              <SelectItem key={industry} value={industry}
-                              className="w-full">
-                                {industry}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
+                        </FormControl>
+                        <SelectContent>
+                          {industryTypesList.map((industry) => (
+                            <SelectItem key={industry} value={industry}>
+                              {industry}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
-                {/* Role */}
                 <FormField
                   control={form.control}
                   name="role"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Role</FormLabel>
-                      <FormControl>
-                        <Select onValueChange={field.onChange} value={field.value}>
+                      <FormLabel>Role at Organisation</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select your role" />
+                            <SelectValue placeholder="Select role" />
                           </SelectTrigger>
-                          <SelectContent>
-                            {roleList.map((role) => ( // ✅ fixed list
-                              <SelectItem key={role} value={role}>
-                                {role}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
+                        </FormControl>
+                        <SelectContent>
+                          {roleList.map((role) => (
+                            <SelectItem key={role} value={role}>
+                              {role}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -187,22 +188,24 @@ const onSubmit = async (data: UserDataType) => {
               </div>
 
               <FormField
-                  control={form.control}
-                  name="about"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Bio</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Describe your role" {...field} className="resize-none">
-                          
-                        </Textarea>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+                control={form.control}
+                name="about"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Bio</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        placeholder="Tell us about yourself"
+                        className="resize-none"
+                      ></Textarea>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
               <Button type="submit" disabled={pending} className="w-full">
-                {pending ? "Submitting..." : "Submit"}
+                Submit
               </Button>
             </form>
           </Form>
@@ -211,5 +214,3 @@ const onSubmit = async (data: UserDataType) => {
     </div>
   );
 };
-
-export default OnboardingForm;
