@@ -1,28 +1,40 @@
 "use server";
 
-import { ProjectDataTye } from "@/components/project/create-project-form";
+import { ProjectDataType } from "@/components/project/create-project-form";
 import { db } from "@/lib/db";
 import { projectSchema } from "@/lib/schema";
 import { userRequired } from "../data/user/is-user-authenticated";
 
-export const createNewProject = async (data: ProjectDataTye) => {
+export const createNewProject = async (data: ProjectDataType) => {
+  // ✅ Ensure user is logged in
   const { user } = await userRequired();
+  if (!user || !user.id) {
+    throw new Error("User not authenticated.");
+  }
 
+  // ✅ Validate input
+  const validatedData = projectSchema.parse(data);
+
+  // ✅ Fetch workspace
   const workspace = await db.workspace.findUnique({
-    where: { id: data?.workspaceId },
+    where: { id: validatedData.workspaceId },
     include: {
       projects: { select: { id: true } },
     },
   });
 
-  const validatedData = projectSchema.parse(data);
+  if (!workspace) {
+    throw new Error("Workspace not found.");
+  }
 
+  // ✅ Fetch members of this workspace
   const workspaceMembers = await db.workspaceMember.findMany({
     where: {
-      workspaceId: data.workspaceId,
+      workspaceId: validatedData.workspaceId,
     },
   });
 
+  // ✅ Check if user belongs to this workspace
   const isUserMember = workspaceMembers.some(
     (member) => member.userId === user.id
   );
@@ -31,30 +43,37 @@ export const createNewProject = async (data: ProjectDataTye) => {
     throw new Error("Unauthorized to create project in this workspace.");
   }
 
-  if (validatedData.memberAccess?.length === 0) {
-    validatedData.memberAccess = [user.id];
-  } else if (!validatedData.memberAccess?.includes(user.id)) {
-    validatedData?.memberAccess?.push(user.id);
+  // ✅ Prepare memberAccess safely
+  let memberAccess = [...(validatedData.memberAccess ?? [])];
+  if (memberAccess.length === 0) {
+    memberAccess = [user.id];
+  } else if (!memberAccess.includes(user.id)) {
+    memberAccess.push(user.id);
   }
 
+  // ✅ Create the project
   await db.project.create({
     data: {
       name: validatedData.name,
       description: validatedData.description,
       workspaceId: validatedData.workspaceId,
       projectAccess: {
-        create: validatedData.memberAccess?.map((userId) => ({
-          workspaceMemberId: workspaceMembers.find(
-            (member) => member.userId === userId
-          )?.id!,
-          hasAccess: true,
-        })),
+        create: memberAccess.map((userId) => {
+          const member = workspaceMembers.find((m) => m.userId === userId);
+          if (!member) {
+            throw new Error(`User ${userId} is not a member of this workspace.`);
+          }
+          return {
+            workspaceMemberId: member.id,
+            hasAccess: true,
+          };
+        }),
       },
       activities: {
         create: {
           type: "PROJECT_CREATED",
           description: `created project "${validatedData.name}"`,
-          userId: user.id,
+          userId: user.id, // ✅ never undefined
         },
       },
     },
@@ -63,12 +82,16 @@ export const createNewProject = async (data: ProjectDataTye) => {
   return { success: true };
 };
 
+
 export const postComment = async (
   workspaceId: string,
   projectId: string,
   content: string
 ) => {
   const { user } = await userRequired();
+  if (!user || !user.id) {
+    throw new Error("User not authenticated.");
+  }
 
   const isMember = await db.workspaceMember.findUnique({
     where: {

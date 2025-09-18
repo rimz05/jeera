@@ -37,15 +37,14 @@ interface Props {
   workspaceMembers: WorkspaceMembersProps[];
 }
 
-export type ProjectDataTye = z.infer<typeof projectSchema>;
+export type ProjectDataType = z.infer<typeof projectSchema>;
 
 export const CreateProjectForm = ({ workspaceMembers }: Props) => {
-   console.log("workspaceMembers received in modal:", workspaceMembers);
   const workspaceId = useWorkspaceId();
   const [pending, setPending] = useState(false);
   const router = useRouter();
 
-  const form = useForm<ProjectDataTye>({
+  const form = useForm<ProjectDataType>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
       name: "",
@@ -54,23 +53,21 @@ export const CreateProjectForm = ({ workspaceMembers }: Props) => {
       memberAccess: [],
     },
   });
-  const handleSubmit = async (data: ProjectDataTye) => {
+  const handleSubmit = async (data: ProjectDataType) => {
+    console.log("Submitting form with data:", data);
     try {
       setPending(true);
-
       await createNewProject(data);
       form.reset();
       toast.success("Project created successfully");
       router.refresh();
     } catch (error) {
       console.log(error);
-
       toast.error("Something went wrong");
     } finally {
       setPending(false);
     }
   };
-  console.log("workspaceMembers received in modal:", workspaceMembers);
 
   return (
     <>

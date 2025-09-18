@@ -1,10 +1,10 @@
 
+import { getUserWorkspaces } from "@/app/data/workspace/get-user-workspaces";
 import { CreateWorkspaceForm } from "@/components/workspace/create-workspace-form";
 import { redirect } from "next/navigation";
-import { getUserWorkspace } from "../workspace/get-user-workspace";
 
 const page = async () => {
-  const { data } = await getUserWorkspace();
+  const { data } = await getUserWorkspaces();
 
   if (!data?.onboardingCompleted) redirect("/onboarding");
   return (

@@ -1,7 +1,6 @@
 import { useParams } from "next/navigation";
 
-export const useWorkspaceId = () => {
-    const params = useParams();
-
-    return params.workspaceId
+export function useWorkspaceId() {
+  const params = useParams<{ workspaceid: string }>();
+  return params.workspaceid;
 }

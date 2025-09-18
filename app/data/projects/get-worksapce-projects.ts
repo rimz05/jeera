@@ -46,7 +46,6 @@ export const getWorkspaceProjectsByWorkspaceId = async (workspaceId: string) => 
         },
       }),
     ]);
-    console.log("workspaceMembers fetched:", workspaceMembers);
 
     return { success: true, projects, workspaceMembers };
   } catch (error) {

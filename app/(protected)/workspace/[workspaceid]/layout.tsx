@@ -6,12 +6,11 @@ import { getUserWorkspaces } from "@/app/data/workspace/get-user-workspaces";
 
 interface Props {
   children: React.ReactNode;
-  params: { workspaceid: string }; // ✅ fixed type
+  params: Promise<{ workspaceid: string }>; // ✅ fixed type
 }
 
-const WorkspaceIdLayout = async ({ children, params }: Props) => {
-  console.log("params received in layout:", params); 
-  const { workspaceid } = params; // ✅ no need to await
+const WorkspaceIdLayout = async ({ children, params }: Props) => { 
+  const { workspaceid } = await params; // ✅ no need to await
   const { data } = await getUserWorkspaces() as unknown as { success: boolean; data: AppSidebarDataProps };
 
 
