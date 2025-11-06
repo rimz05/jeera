@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CommentProps, ProjectProps} from "@/utils/types";
-import { getProjectDetails } from "@/app/data/projects/get-project-details";
+// import { getProjectDetails } from "@/app/data/projects/get-project-details";
 import ProjectDashboard from "@/components/project/project-dashboard";
 
 interface ProjectPageProps {
@@ -12,8 +12,11 @@ const ProjectPage = async (props: ProjectPageProps) => {
   const { workspaceId, projectId } = await props.params;
   const searchParams = await props.searchParams;
 
-  const { project, tasks, comments, activities, totalWorkspaceMembers } =
-  await getProjectDetails(workspaceId, projectId);
+  console.log("workspaceId",workspaceId,"projectId",projectId)
+
+  // const { project, tasks, comments, activities, totalWorkspaceMembers } =
+  // await getProjectDetails(workspaceId, projectId);
+
 
   return (
     <div className="flex flex-col gap-6 pb-3 px-3">
@@ -40,7 +43,7 @@ const ProjectPage = async (props: ProjectPageProps) => {
         </TabsList>
 
         <TabsContent value="dashboard">
-          <ProjectDashboard
+          {/* <ProjectDashboard
             project={project as unknown as ProjectProps}
             tasks={{
                 completed: tasks?.completed ?? 0,
@@ -52,7 +55,7 @@ const ProjectPage = async (props: ProjectPageProps) => {
             activities={activities!}
             totalWorkspaceMembers={totalWorkspaceMembers!}
             comments={comments as CommentProps[]}
-          />
+          /> */}
         </TabsContent>
       </Tabs>
     </div>

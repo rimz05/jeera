@@ -72,7 +72,6 @@ export const CreateTaskDialog = ({ project }: Props) => {
   const handleOnSubmit = async (data: TaskFormValues) => {
     try {
       setPending(true);
-
       await createNewTask(data, project.id, workspaceId! as string);
 
       toast.success("New task created successfully");
@@ -86,7 +85,19 @@ export const CreateTaskDialog = ({ project }: Props) => {
     }
   };
 
-  return (
+
+  // if (!project) {
+  //   console.error("project is missing");
+  // }
+  // console.log("project", project);
+
+  // if (!workspaceId) {
+  //   console.error("Workspace ID is missing");
+  //   return null;
+  // }
+  // console.log("workspaceId", workspaceId);
+
+  return (    
     <Dialog>
       <DialogTrigger asChild>
         <Button>Create Task</Button>
@@ -115,6 +126,7 @@ export const CreateTaskDialog = ({ project }: Props) => {
               )}
             />
 
+            {/* assignee */}
             <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}

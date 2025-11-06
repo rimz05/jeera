@@ -1,16 +1,13 @@
-import {
-  $Enums,
-  AccessLevel,
-  Comment,
-  WorkspaceMember,
-} from "@prisma/client";
+// utils/types.ts
+
+import { $Enums, AccessLevel, Comment, WorkspaceMember } from "@prisma/client";
 
 export interface WorkspaceMembersProps extends WorkspaceMember {
   user: {
     id: string;
     name: string;
     email: string;
-    image?: string;
+    image?: string | null;
   };
   projectAccess: {
     id: string;
@@ -34,7 +31,7 @@ export interface ProjectProps {
       id: string;
       name: string;
       email: string;
-      image: string;
+      image: string | null;
     };
   }[];
 }
@@ -51,8 +48,9 @@ export interface WorkspacesProps {
 }
 
 export interface CommentProps extends Comment {
-  user: {id: string;
+  user: {
+    id: string;
     name: string;
-    image: string
+    image: string | null;
   };
 }

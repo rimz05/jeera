@@ -1,5 +1,5 @@
 import { getWorkspaceById } from "@/app/data/workspace/get-workspace";
-import { WorkspaceSettingsForm } from "@/components/workspace/workspace-setting-form";
+// import { WorkspaceSettingsForm } from "@/components/workspace/workspace-setting-form";
 import React from "react";
 
 const WorkspaceSettings = async ({
@@ -9,10 +9,11 @@ const WorkspaceSettings = async ({
 }) => {
   const { workspaceId } = await params;
 
-  const { data } = await getWorkspaceById(workspaceId);
+  // const { data } = await getWorkspaceById(workspaceId);
   return (
     <div>
-      <WorkspaceSettingsForm data={data as any} />
+      {/* <WorkspaceSettingsForm data={data as any} /> */}
+      hii workspace settings page
     </div>
   );
 };
