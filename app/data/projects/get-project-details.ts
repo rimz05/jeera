@@ -87,6 +87,16 @@ export const getProjectDetails = async (
           task.dueDate &&
           new Date(task.dueDate) < new Date()
       ).length,
+       todo: project?.tasks.filter(
+    (task) =>
+      (
+        task.status === TaskStatus.TODO ||
+        task.status === TaskStatus.BACKLOG ||
+        task.status === TaskStatus.BLOCKED ||
+        task.status === TaskStatus.IN_REVIEW
+      ) &&
+      (!task.dueDate || new Date(task.dueDate) >= new Date())
+  ).length,
       items: project?.tasks,
     };
 

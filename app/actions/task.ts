@@ -34,7 +34,7 @@ export const createNewTask = async (
 
   const lastTask = tasks
     ?.filter((task) => task.status === data.status)
-    .sort((a, b) => (b.position = a.position))[0];
+    .sort((a, b) => b.position - a.position)[0];
 
   const position = lastTask ? lastTask.position + 1000 : 1000;
 
@@ -42,8 +42,8 @@ export const createNewTask = async (
     data: {
       title: validatedData.title,
       description: validatedData.description,
-      startDate: new Date(validatedData.startDate),
-      dueDate: new Date(validatedData.dueDate),
+      startDate: validatedData.startDate ? new Date(validatedData.startDate): new Date(),
+      dueDate: validatedData.dueDate ? new Date(validatedData.dueDate) : new Date(),
       projectId,
       assigneeId: validatedData.assigneeId,
       status: validatedData.status,

@@ -1,23 +1,23 @@
 import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
-export const ProjectAvatar = ({
+export const ProfileAvatar = ({
+  url,
   name,
+  size = "md",
   className,
   numOfChars = 1,
-  url,
-  size = "md",
 }: {
   name: string;
   url?: string;
   size?: "sm" | "md" | "lg";
-  numOfChars?: number; // ✅ corrected prop name
   className?: string;
+  numOfChars?: number;
 }) => {
   return (
     <Avatar
       className={cn(
-        "rounded-md",
+        "h-8 w-8 rounded-md",
         size === "sm" && "h-6 w-6",
         size === "md" && "h-8 w-8",
         size === "lg" && "h-10 w-10",
@@ -25,7 +25,7 @@ export const ProjectAvatar = ({
       )}
     >
       <AvatarImage src={url || undefined} alt={name} />
-      <AvatarFallback>
+      <AvatarFallback className="bg-blue-600 text-white rounded-md">
         {name.substring(0, numOfChars).toUpperCase()}
       </AvatarFallback>
     </Avatar>

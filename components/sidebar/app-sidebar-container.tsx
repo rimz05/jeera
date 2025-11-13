@@ -28,6 +28,7 @@ export const AppSidebarContainer = async ({
     const { projects, workspaceMembers } =
     await getWorkspaceProjectsByWorkspaceId(workspaceId);
     const user = await getUserById();
+    console.log("Workspace Members in Container:", workspaceMembers);
 
   return (
     <AppSidebar

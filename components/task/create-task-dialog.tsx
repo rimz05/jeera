@@ -72,8 +72,7 @@ export const CreateTaskDialog = ({ project }: Props) => {
   const handleOnSubmit = async (data: TaskFormValues) => {
     try {
       setPending(true);
-      await createNewTask(data, project.id, workspaceId! as string);
-
+      await createNewTask(data, project.id, project.workspaceId);
       toast.success("New task created successfully");
       router.refresh();
       form.reset();
@@ -85,17 +84,6 @@ export const CreateTaskDialog = ({ project }: Props) => {
     }
   };
 
-
-  // if (!project) {
-  //   console.error("project is missing");
-  // }
-  // console.log("project", project);
-
-  // if (!workspaceId) {
-  //   console.error("Workspace ID is missing");
-  //   return null;
-  // }
-  // console.log("workspaceId", workspaceId);
 
   return (    
     <Dialog>

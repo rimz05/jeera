@@ -53,6 +53,7 @@ export const CreateProjectForm = ({ workspaceMembers }: Props) => {
       memberAccess: [],
     },
   });
+
   const handleSubmit = async (data: ProjectDataType) => {
     console.log("Submitting form with data:", data);
     try {
@@ -80,7 +81,7 @@ export const CreateProjectForm = ({ workspaceMembers }: Props) => {
         <DialogContent>
           <Card className="w-full max-w-md">
             <DialogHeader>
-              <DialogTitle>Create New Workspace</DialogTitle>
+              <DialogTitle>Create New Project</DialogTitle>
             </DialogHeader>
 
             <Form {...form}>
@@ -88,6 +89,7 @@ export const CreateProjectForm = ({ workspaceMembers }: Props) => {
                 onSubmit={form.handleSubmit(handleSubmit)}
                 className="space-y-5"
               >
+                {/* project name */}
                 <FormField
                   control={form.control}
                   name="name"
@@ -95,13 +97,14 @@ export const CreateProjectForm = ({ workspaceMembers }: Props) => {
                     <FormItem>
                       <FormLabel>Project Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter workspace name" {...field} />
+                        <Input placeholder="Enter project name" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
+                {/* description */}
                 <FormField
                   control={form.control}
                   name="description"
@@ -111,7 +114,7 @@ export const CreateProjectForm = ({ workspaceMembers }: Props) => {
                       <FormControl>
                         <Textarea
                           {...field}
-                          placeholder="Workspace description"
+                          placeholder="Project description"
                           className="resize-none"
                         ></Textarea>
                       </FormControl>
@@ -119,6 +122,7 @@ export const CreateProjectForm = ({ workspaceMembers }: Props) => {
                   )}
                 />
 
+                {/* access selection */}
                 <div>
                   <FormField
                     control={form.control}

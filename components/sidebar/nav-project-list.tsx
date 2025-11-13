@@ -1,6 +1,4 @@
-// components/sidebar/nav-project-list.tsx
 "use client";
-
 import { ProjectProps, WorkspaceMembersProps } from "@/utils/types";
 import {
   SidebarGroup,
@@ -15,10 +13,11 @@ import { CreateProjectForm } from "../project/create-project-form";
 
 interface NavProjectsProps {
   projects: ProjectProps[];
-  workspaceMembers: WorkspaceMembersProps[]; // ✅ must be typed
+  workspaceMembers: WorkspaceMembersProps[];
 }
 
 export const NavProjects = ({ projects, workspaceMembers }: NavProjectsProps) => {
+
   const { isMobile, setOpenMobile } = useSidebar();
   const pathname = usePathname();
 
@@ -28,8 +27,6 @@ export const NavProjects = ({ projects, workspaceMembers }: NavProjectsProps) =>
         <span className="text-sm font-semibold text-muted-foreground uppercase">
           Projects
         </span>
-
-        {/* ✅ workspaceMembers finally arrive here */}
         <CreateProjectForm workspaceMembers={workspaceMembers} />
       </SidebarGroupLabel>
 

@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CommentProps, ProjectProps} from "@/utils/types";
-// import { getProjectDetails } from "@/app/data/projects/get-project-details";
+import { CommentProps, ProjectProps, ProjectTaskProps} from "@/utils/types";
+import { getProjectDetails } from "@/app/data/projects/get-project-details";
 import ProjectDashboard from "@/components/project/project-dashboard";
+import { ProjectTableContainer } from "@/components/project/project-table-container";
+import { ProjectKanban } from "@/components/project/project-kanban";
 
 interface ProjectPageProps {
   params: Promise<{ workspaceId: string; projectId: string }>;
@@ -12,10 +14,8 @@ const ProjectPage = async (props: ProjectPageProps) => {
   const { workspaceId, projectId } = await props.params;
   const searchParams = await props.searchParams;
 
-  console.log("workspaceId",workspaceId,"projectId",projectId)
-
-  // const { project, tasks, comments, activities, totalWorkspaceMembers } =
-  // await getProjectDetails(workspaceId, projectId);
+  const { project, tasks, comments, activities, totalWorkspaceMembers } =
+  await getProjectDetails(workspaceId, projectId);
 
 
   return (
@@ -43,11 +43,12 @@ const ProjectPage = async (props: ProjectPageProps) => {
         </TabsList>
 
         <TabsContent value="dashboard">
-          {/* <ProjectDashboard
+          <ProjectDashboard
             project={project as unknown as ProjectProps}
             tasks={{
                 completed: tasks?.completed ?? 0,
                 inProgress: tasks?.inProgress ?? 0,
+                todo: tasks?.todo ?? 0,
                 overdue: tasks?.overdue ?? 0,
                 total: tasks?.total ?? 0,
                 items: tasks?.items ?? []
@@ -55,7 +56,15 @@ const ProjectPage = async (props: ProjectPageProps) => {
             activities={activities!}
             totalWorkspaceMembers={totalWorkspaceMembers!}
             comments={comments as CommentProps[]}
-          /> */}
+          />
+        </TabsContent>
+
+        <TabsContent value="table">
+          <ProjectTableContainer projectId={projectId}/>
+        </TabsContent>
+
+        <TabsContent value="kanban">
+          <ProjectKanban initialTasks = {tasks?.items as unknown as ProjectTaskProps}/>
         </TabsContent>
       </Tabs>
     </div>
