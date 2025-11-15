@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-// import { FileUpload } from "../file-upload";
 import { z } from "zod";
 import {
   Dialog,
@@ -33,49 +32,53 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { TaskPriority } from "@prisma/client";
+import { Task, TaskPriority, User } from "@prisma/client";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Pencil } from "lucide-react";
 import { Calendar } from "../ui/calendar";
 import { taskStats } from "@/utils";
 import { Textarea } from "../ui/textarea";
 import { toast } from "sonner";
-import { createNewTask } from "@/app/actions/task";
-import { FileUpload } from "../file-upload";
+import { createNewTask, updateTask } from "@/app/actions/task";
 
 interface Props {
   project: ProjectProps;
+  task: Task & {
+    assignedTo: User;
+  };
 }
 
 export type TaskFormValues = z.infer<typeof taskFormSchema>;
 
-export const CreateTaskDialog = ({ project }: Props) => {
+export const EditTaskDialog = ({ task, project }: Props) => {
   const router = useRouter();
-  // const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const workspaceId = useWorkspaceId();
   const [pending, setPending] = useState(false);
 
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      status: "TODO",
-      dueDate: new Date(),
-      startDate: new Date(),
-      priority: "MEDIUM",
+      title: task?.title || "",
+      description: task.description || "",
+      status: task.status || "TODO",
+      dueDate: task.dueDate || new Date(),
+      startDate: task.startDate || new Date(),
+      priority: task.priority || "MEDIUM",
       attachments: [],
-      assigneeId: "",
+      assigneeId: task.assigneeId || "",
     },
   });
 
   const handleOnSubmit = async (data: TaskFormValues) => {
     try {
       setPending(true);
-      await createNewTask(data, project.id, project.workspaceId);
-      toast.success("New task created successfully");
+
+      await updateTask(task.id, data, project.id, workspaceId! as string);
+
+      toast.success("Task updated successfully");
       router.refresh();
       form.reset();
     } catch (error) {
@@ -86,16 +89,18 @@ export const CreateTaskDialog = ({ project }: Props) => {
     }
   };
 
-
-  return (    
+  return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Create Task</Button>
+        <Button variant={"outline"}>
+          <Pencil />
+          Edit Task
+        </Button>
       </DialogTrigger>
 
-      <DialogContent className="overflow-y-scroll max-h-[80vh]">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Task</DialogTitle>
+          <DialogTitle>Edit Task</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form
@@ -116,7 +121,6 @@ export const CreateTaskDialog = ({ project }: Props) => {
               )}
             />
 
-            {/* assignee */}
             <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -134,7 +138,7 @@ export const CreateTaskDialog = ({ project }: Props) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {project?.members.map((member) => (
+                        {project.members.map((member) => (
                           <SelectItem key={member.id} value={member.userId}>
                             {member?.user?.name}
                           </SelectItem>
@@ -211,7 +215,6 @@ export const CreateTaskDialog = ({ project }: Props) => {
                             date < field.value ||
                             date < new Date(new Date().setHours(0, 0, 0, 0))
                           }
-                          initialFocus
                         />
                       </PopoverContent>
                     </Popover>
@@ -310,26 +313,9 @@ export const CreateTaskDialog = ({ project }: Props) => {
               )}
             />
 
-           <FormField
-              control={form.control}
-              name="attachments"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Attachments</FormLabel>
-                  <FormControl>
-                    <FileUpload
-                      value={field.value || []}
-                      onChange={field.onChange}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <div className="flex justify-end space-x-2">
               <Button type="submit" disabled={pending}>
-                Submit
+                Save Changes
               </Button>
             </div>
           </form>
