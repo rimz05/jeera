@@ -55,7 +55,6 @@ export const CreateProjectForm = ({ workspaceMembers }: Props) => {
   });
 
   const handleSubmit = async (data: ProjectDataType) => {
-    console.log("Submitting form with data:", data);
     try {
       setPending(true);
       await createNewProject(data);

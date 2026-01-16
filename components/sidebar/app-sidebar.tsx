@@ -28,23 +28,23 @@ export const AppSidebar = ({
   user: User;
 }) => {
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader className="bg-background">
-        <div className="flex items-center">
+    <Sidebar collapsible="icon" >
+      <SidebarHeader>
+        <div className="flex items-center px-4 text-white my-8">
           <Avatar>
             <AvatarImage src={"/wrench.svg"} />
           </Avatar>
           <SidebarGroupLabel>
-            <span className="text-xl font-bold">DailyTM</span>
+            <span className="text-xl font-bold ">HiiTeam</span>
           </SidebarGroupLabel>
         </div>
 
-        <div className="flex justify-between mb-0">
-          <SidebarGroupLabel className="mb-2 text-sm font-semibold text-muted-foreground uppercase">
+        <div className="flex justify-between mb-0 text-white">
+          <SidebarGroupLabel className="mb-2 text-sm font-semibold text-white uppercase">
             Workspace
           </SidebarGroupLabel>
 
-          <Button asChild size={"icon"} className="size-5">
+          <Button asChild size={"icon"} className="relative size-5 top-2 right-2">
             <Link href="/create-workspace">
               <Plus />
             </Link>
@@ -57,12 +57,12 @@ export const AppSidebar = ({
       <SidebarContent>
         <NavMain />
 
-        {/* ✅ pass members down into NavProjects */}
         <NavProjects
           projects={projects}
           workspaceMembers={workspaceMembers}
         />
       </SidebarContent>
     </Sidebar>
+    
   );
 };

@@ -71,7 +71,7 @@ export const WorkspaceSelector = ({
                   key={workspace.id}
                   onSelect={() => onWorkspaceSelect(workspace?.workspaceId!)}
                 >
-                  <div className="flex flex-row items-center gap-2">
+                  <div className="flex flex-row items-center gap-2 text-white">
                     <WorkspaceAvatar
                       name={workspace?.workspace.name as string}
                     />

@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { redirect} from "next/navigation";
 import { $Enums, AccessLevel } from "@prisma/client";
 import { generateInviteCode } from "@/utils/generate-invite-code";
+import { Resend } from "resend";
 
 export const createNewWorkspace = async (data: CreateWorkspaceDataType) => {
   try {
@@ -257,4 +258,71 @@ export const updateProjectAccess = async (
   }
 
   return { success: true };
+};
+
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+export const sendWorkspaceInvite = async (
+  workspaceId: string,
+  email: string
+) => {
+  console.log("🔥 sendWorkspaceInvite CALLED");
+  try {
+    const { user } = await userRequired();
+
+    const member = await db.workspaceMember.findUnique({
+      where: {
+        userId_workspaceId: {
+          userId: user.id,
+          workspaceId,
+        },
+      },
+    });
+
+    if (!member || member.accessLevel !== "OWNER") {
+      throw new Error("Only owners can invite members");
+    }
+
+    const workspace = await db.workspace.findUnique({
+      where: { id: workspaceId },
+    });
+
+    if (!workspace) {
+      throw new Error("Workspace not found");
+    }
+
+    const inviteLink = `${process.env.NEXT_PUBLIC_BASE_URL}/workspace-invite/${workspace.id}/join/${workspace.inviteCode}`;
+
+    // ✉️ Send email
+    const { data, error } = await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: email,
+      subject: `You're invited to join ${workspace.name}`,
+      html: `
+        <h2>You’re invited to join ${workspace.name}</h2>
+        <p>${user.given_name || "Someone"} invited you to collaborate.</p>
+        <a href="${inviteLink}">Join Workspace</a>
+      `,
+    });
+
+    console.log("📩 RESEND DATA:", data);
+    console.log("❌ RESEND ERROR:", error);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Failed to send invite",
+    };
+  }
 };

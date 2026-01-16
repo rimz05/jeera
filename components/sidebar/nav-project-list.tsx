@@ -22,9 +22,9 @@ export const NavProjects = ({ projects, workspaceMembers }: NavProjectsProps) =>
   const pathname = usePathname();
 
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+    <SidebarGroup className="group-data-[collapsible=icon]:hidden ">
       <SidebarGroupLabel className="flex justify-between">
-        <span className="text-sm font-semibold text-muted-foreground uppercase">
+        <span className="text-sm font-semibold text-white uppercase">
           Projects
         </span>
         <CreateProjectForm workspaceMembers={workspaceMembers} />
@@ -46,7 +46,7 @@ export const NavProjects = ({ projects, workspaceMembers }: NavProjectsProps) =>
                   className={
                     isActive
                       ? "text-blue-500 font-semibold"
-                      : "text-muted-foreground"
+                      : "text-white"
                   }
                 >
                   {proj?.name}

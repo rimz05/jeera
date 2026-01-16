@@ -22,15 +22,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import React from "react";
-import { Input } from "../ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
 import { ChevronDown } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { Button } from "./ui/button";
+import { DropdownMenuCheckboxItem } from "./ui/dropdown-menu";
+import { Input } from "./ui/input";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -83,6 +79,7 @@ export function DataTable<TData, TValue>({
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
+
             <Button variant="outline" className="ml-auto">
               Columns <ChevronDown />
             </Button>

@@ -5,6 +5,9 @@ import { getProjectDetails } from "@/app/data/projects/get-project-details";
 import ProjectDashboard from "@/components/project/project-dashboard";
 import { ProjectTableContainer } from "@/components/project/project-table-container";
 import { ProjectKanban } from "@/components/project/project-kanban";
+import { GanttChart } from "@/components/project/project-gantt-chart";
+import { ProjectCalender } from "@/components/project/project-calender";
+
 
 interface ProjectPageProps {
   params: Promise<{ workspaceId: string; projectId: string }>;
@@ -35,11 +38,25 @@ const ProjectPage = async (props: ProjectPageProps) => {
               Table
             </TabsTrigger>
           </Link>
+
           <Link href="?view=kanban">
             <TabsTrigger value="kanban" className="px-1.5 md:px-3">
               Kanban
             </TabsTrigger>
           </Link>
+
+          <Link href="?view=gantt-chart">
+            <TabsTrigger value="gantt-chart" className="px-1.5 md:px-3">
+              Timeline
+            </TabsTrigger>
+          </Link>
+
+          <Link href="?view=calender">
+            <TabsTrigger value="calender" className="px-1.5 md:px-3">
+              Calender
+            </TabsTrigger>
+          </Link>
+
         </TabsList>
 
         <TabsContent value="dashboard">
@@ -64,7 +81,15 @@ const ProjectPage = async (props: ProjectPageProps) => {
         </TabsContent>
 
         <TabsContent value="kanban">
-          <ProjectKanban initialTasks = {tasks?.items as unknown as ProjectTaskProps}/>
+          <ProjectKanban initialTasks = {tasks?.items as unknown as ProjectTaskProps[]}/>
+        </TabsContent>
+
+        <TabsContent value="gantt-chart">
+          <GanttChart/>
+        </TabsContent>
+
+        <TabsContent value="calender">
+          <ProjectCalender/>
         </TabsContent>
       </Tabs>
     </div>

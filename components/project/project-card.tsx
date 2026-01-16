@@ -8,6 +8,7 @@ import { ProjectAvatar } from "./project-avatar";
 import { ProfileAvatar } from "../profileAvatar";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { TaskPriority } from "@prisma/client";
 
 interface DataProps {
   ref: (element?: HTMLElement | null) => void;
@@ -15,7 +16,14 @@ interface DataProps {
   provided: DraggableProvided;
 }
 
-export const ProjectCard = ({ ref, provided, task }: DataProps) => {
+const priorityStyles: Record<TaskPriority, string> = {
+  LOW: "bg-emerald-100 text-emerald-900",
+  MEDIUM: "bg-yellow-100 text-yellow-900",
+  HIGH: "bg-orange-100 text-orange-900",
+  CRITICAL: "bg-red-100 text-red-900",
+};
+
+export const ProjectCard = ({ provided, task }: DataProps) => {
   const workspaceId = useWorkspaceId();
   const projectId = useProjectId();
 
@@ -24,54 +32,58 @@ export const ProjectCard = ({ ref, provided, task }: DataProps) => {
       ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
-      className={cn(
-        "p-2 mb-3 rounded-2xl border border-border/50 shadow-sm hover:shadow-md transition-all",
-        "bg-white dark:bg-gray-900"
-      )}
+      className="mb-3 p-0 overflow-hidden rounded-xl border border-border/40 bg-white shadow-sm hover:shadow-md transition-all"
     >
-      <Link
-        href={`/workspace/${workspaceId}/projects/${projectId}/${task.id}`}
-        className="group"
+      {/* Priority strip */}
+      <div
+        className={cn(
+          "text-xs font-semibold uppercase tracking-wide pt-5 p-1",
+          priorityStyles[task.priority]
+        )}
       >
-        {/* Title + Priority */}
-        <div className="flex items-center justify-between">
-          <h3 className="text-base font-semibold group-hover:text-primary transition-colors">
+        <div className="p-2">
+         {task.priority} priority
+        </div>
+
+      {/* Content */}
+      <div className="mb-1 rounded-xl bg-white mt-1 border-1 border-gray-300">
+        <Link
+          href={`/workspace/${workspaceId}/projects/${projectId}/${task.id}`}
+          className="block px-4 py-3 space-y-2"
+        >
+          <span className="inline-block text-xs font-medium text-muted-foreground bg-muted px-1 py-1 rounded-lg">
+            {task.project.name.slice(0, 2).toUpperCase()}
+          </span>
+
+          <h3 className="text-lg font-semibold leading-tight text-black">
             {task.title}
           </h3>
-          <Badge
-            variant={task.priority}
-            className="capitalize"
-          >
-            {task.priority}
-          </Badge>
-        </div>
 
-        {/* Description */}
-        {task.description && (
-          <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
-            {task.description}
-          </p>
-        )}
+          {task.description && (
+            <p className="text-xsm text-gray-500 ">
+              {task.description}
+            </p>
+          )}
 
-        {/* Footer Section */}
-        <div className="flex items-center justify-between mt-4 flex-wrap gap-3 text-sm text-muted-foreground">
-          {/* Project Info */}
-          <div className="flex items-center gap-2">
-            <ProjectAvatar name={task.project.name} className="!size-6" />
-            <span>{task.project.name}</span>
+          <div className="flex items-center justify-between pt-2">
+            <div className="flex items-center gap-3 text-xs text-gray-700">
+              <div className="flex items-center gap-1">💬 <span>10</span></div>
+              <div className="flex items-center gap-1">📎 <span>4</span></div>
+            </div>
+
+            <div className="flex items-center -space-x-2">
+              <ProfileAvatar
+                url={task.assignedTo.image}
+                name={task.assignedTo.name}
+                className="size-7"
+              />
+            </div>
           </div>
-
-          {/* Assigned To */}
-          <div className="flex items-center gap-2">
-            <ProfileAvatar
-              url={task.assignedTo.image}
-              name={task.assignedTo.name}
-              className="!size-6"
-            />
-            <span>{task.assignedTo.name}</span>
-          </div>
-        </div>
-      </Link>
+        </Link>
+      </div>
+      </div>
     </Card>
   );
 };
+
+

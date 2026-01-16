@@ -1,12 +1,11 @@
 import { Bell } from "lucide-react";
-import { Button } from "../ui/button";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { ThemeToggle } from "./theme-toggle";
-import { Popover, PopoverTrigger } from "../ui/popover";
-import { PopoverContent } from "@radix-ui/react-popover";
-import { Separator } from "../ui/separator";
-import { Profiler } from "react";
-import { ProjectAvatar } from "../project/project-avatar";
+import { Popover, PopoverContent } from "@radix-ui/react-popover";
+import { ProjectAvatar } from "./project/project-avatar";
+import { Button } from "./ui/button";
+import { PopoverTrigger } from "./ui/popover";
+import { Separator } from "./ui/separator";
 
 interface Props {
   id: string;

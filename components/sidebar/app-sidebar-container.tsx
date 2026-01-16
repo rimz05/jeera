@@ -28,14 +28,14 @@ export const AppSidebarContainer = async ({
     const { projects, workspaceMembers } =
     await getWorkspaceProjectsByWorkspaceId(workspaceId);
     const user = await getUserById();
-    console.log("Workspace Members in Container:", workspaceMembers);
 
   return (
-    <AppSidebar
+      <AppSidebar
       data={data}
       projects={projects as unknown as ProjectProps[]}
       workspaceMembers={workspaceMembers as unknown as WorkspaceMembersProps[]}
       user={user as User}
     />
+    
   );
 };

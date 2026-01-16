@@ -1,19 +1,24 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebarContainer, AppSidebarDataProps } from "@/components/sidebar/app-sidebar-container";
+import { AppSidebarContainer } from "@/components/sidebar/app-sidebar-container";
 import { getUserWorkspaces } from "@/app/data/workspace/get-user-workspaces";
-import { Navbar } from "@/components/workspace/navbar";
+import { Navbar } from "@/components/navbar";
+import { WorkspaceShell } from "@/components/workspace/workspace-shell";
+
 
 interface Props {
   children: React.ReactNode;
-  params: Promise<{ workspaceId: string }>; // ✅ fixed type
+  params: Promise<{ workspaceId: string }>;
 }
 
-const WorkspaceIdLayout = async ({ children, params }: Props) => { 
-  const { workspaceId } = await params; // ✅ no need to await
-  const { data } = await getUserWorkspaces() as unknown as { success: boolean; data: AppSidebarDataProps };
+const WorkspaceIdLayout = async ({ children, params }: Props) => {
+  const { workspaceId } = await params;
 
+  const { data } = (await getUserWorkspaces()) as {
+    success: boolean;
+    data: any;
+  };
 
   if (!data?.onboardingCompleted && (data?.workspaces?.length ?? 0) === 0) {
     redirect("/create-workspace");
@@ -23,20 +28,30 @@ const WorkspaceIdLayout = async ({ children, params }: Props) => {
 
   return (
     <SidebarProvider>
-      <div className="w-full flex bg-background h-screen ">
-        <AppSidebarContainer data={data} workspaceId={workspaceId} />
-        <main className="w-full overflow-y-auto min-h-screen">
-          <div className="flex items-center">
-            <SidebarTrigger className="pt-3" />
-            <Navbar 
-            id={data?.id}
-            name={data?.name as string}
-            email={data?.email as string}
-            image={data?.image as string}/>
+      <WorkspaceShell
+        sidebar={
+          <AppSidebarContainer data={data} workspaceId={workspaceId} />
+        }
+        main={
+          <div className="flex flex-col h-full">
+
+            <div className="p-3 rounded-4xl flex items-center gap-2">
+              <SidebarTrigger />
+              <Navbar
+                id={data?.id}
+                name={data?.name as string}
+                email={data?.email as string}
+                image={data?.image as string}
+              />
+            </div>
+
+            <div className="p-4 md:p-6 flex-1 overflow-auto">
+              {children}
+            </div>
+
           </div>
-          <div className="p-0 md:p-4 pt-2">{children}</div>
-        </main>
-      </div>
+        }
+      />
     </SidebarProvider>
   );
 };

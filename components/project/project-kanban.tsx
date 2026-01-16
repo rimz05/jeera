@@ -114,15 +114,18 @@ export const ProjectKanban = ({
   );
 
   return (
-    <div className="flex gap-2 h-full">
+    <div className="flex overflow-x-scroll gap-10 h-165">
       <DragDropContext onDragEnd={onDragEnd}>
         {columns.map((column) => (
           <div
             key={column.id}
-            className="flex flex-col min-w-60 w-80 bg-gray-50 dark:bg-gray-900 p-3"
+            className="flex flex-col min-w-80 w-80 bg-gray-50 dark:bg-gray-900 p-3 border-t-3"
+            style = {{
+              borderColor: taskStatusVariant[column.id as TaskStatus],
+            }}
           >
             <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2 mb-4 pl-3">
+              <div className="flex items-center gap-4 mb-4 pl-3">
                 <div
                   className={cn("size-4 rounded")}
                   style={{

@@ -5,6 +5,7 @@ export const getWorkspaceMembers = async (workspaceId: string) => {
   try {
     const { user } = await userRequired();
 
+     // Authorization
     const isUserMember = await db.workspaceMember.findUnique({
       where: {
         userId_workspaceId: {
@@ -18,6 +19,7 @@ export const getWorkspaceMembers = async (workspaceId: string) => {
       throw new Error("Unauthorized access");
     }
 
+    // ✅ Fetch members with project names
     const [workspaceMembers, workspaceProjects] = await Promise.all([
       db.workspaceMember.findMany({
         where: { workspaceId },
